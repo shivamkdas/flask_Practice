@@ -124,6 +124,129 @@ Form pre-filled with student details.
 
 ---
 
+## Jenkins CI/CD Pipeline
+
+This project includes a Jenkins CI/CD pipeline for automatically building, testing, and deploying the Flask application to a staging directory.
+
+### Prerequisites
+
+The Jenkins server requires:
+
+* Java/JDK
+* Jenkins
+* Python 3
+* pip
+* Git
+* MongoDB
+* Python dependencies listed in `requirements.txt`
+
+### Pipeline Stages
+
+The pipeline is defined in the `Jenkinsfile` in the project root.
+
+#### 1. Build
+
+The Build stage creates a Python virtual environment and installs the application's dependencies.
+
+```bash
+python3 -m venv venv
+venv/bin/pip install --upgrade pip
+venv/bin/pip install -r requirements.txt
+```
+
+#### 2. Test
+
+The Test stage runs the application's automated tests using pytest.
+
+```bash
+venv/bin/pytest -v
+```
+
+The tests use the local MongoDB database:
+
+```text
+mongodb://localhost:27017/test_student_db
+```
+
+#### 3. Deploy to Staging
+
+If all tests pass, the Deploy to Staging stage copies the Flask application files into a `staging` directory.
+
+The deployed files include:
+
+* `app.py`
+* `templates/`
+* `requirements.txt`
+* `start_flask.sh`
+
+### Jenkins Pipeline Flow
+
+```text
+GitHub Repository
+       |
+       v
+     Build
+       |
+       v
+     Test
+       |
+   Tests Pass
+       |
+       v
+Deploy to Staging
+```
+
+If the Build or Test stage fails, the Deploy stage is not executed.
+
+### Jenkinsfile
+
+The pipeline configuration is stored in:
+
+```text
+Jenkinsfile
+```
+
+The Jenkins job can be configured to use the GitHub repository and execute this Jenkinsfile as a Pipeline script from SCM.
+
+### GitHub Trigger
+
+The Jenkins pipeline can be configured to run automatically when changes are pushed to the repository's `main` branch.
+
+A GitHub webhook can be configured to send push events to:
+
+```text
+http://<JENKINS-SERVER>:8080/github-webhook/
+```
+
+### Environment Variables
+
+The Jenkins pipeline defines the following environment variables for the CI test environment:
+
+```text
+MONGO_URI=mongodb://localhost:27017/test_student_db
+SECRET_KEY=jenkins-test-secret
+```
+
+Sensitive production credentials should not be stored directly in the Jenkinsfile. Jenkins Credentials should be used for sensitive deployment information.
+
+### Notifications
+
+Jenkins can be configured to send email notifications after a build completes. Notifications can be configured for successful and failed builds.
+
+### Local Testing
+
+Before running the Jenkins pipeline, the application tests can be verified locally with:
+
+```bash
+pytest -s
+```
+
+A successful test run should report:
+
+```text
+4 passed
+```
+
 ## License
 
 MIT License
