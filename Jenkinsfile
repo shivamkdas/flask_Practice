@@ -42,13 +42,22 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
+post {
+    success {
+        echo 'Pipeline completed successfully!'
+        emailext(
+            subject: "Jenkins SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: "Build ${env.BUILD_NUMBER} completed successfully.\n\nCheck Jenkins: ${env.BUILD_URL}",
+            to: "shivamkdas@gmail.com"
+        )
+    }
 
-        failure {
-            echo 'Pipeline failed. Please check the build logs.'
-        }
+    failure {
+        echo 'Pipeline failed. Please check the build logs.'
+        emailext(
+            subject: "Jenkins FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: "Build ${env.BUILD_NUMBER} failed.\n\nCheck Jenkins: ${env.BUILD_URL}",
+            to: "shivamkdas@gmail.com"
+        )
     }
 }
