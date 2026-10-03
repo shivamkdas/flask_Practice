@@ -246,6 +246,39 @@ A successful test run should report:
 ```text
 4 passed
 ```
+## GitHub Actions CI/CD
+
+This project uses GitHub Actions to automate testing, building, and deployment.
+
+### Workflow
+
+The workflow is defined in `.github/workflows/ci-cd.yml`.
+
+- Push to `main`: runs tests and build.
+- Push to `staging`: runs tests, build, and staging deployment.
+- Publishing a GitHub Release: runs tests, build, and production deployment.
+
+### Pipeline Stages
+
+1. **Test** - Installs Python dependencies and runs the pytest test suite.
+2. **Build** - Creates a build directory containing the Flask application files.
+3. **Deploy to Staging** - Runs automatically when code is pushed to the `staging` branch.
+4. **Deploy to Production** - Runs automatically when a GitHub Release is published.
+
+### GitHub Secrets
+
+The workflow uses GitHub repository secrets for configuration:
+
+- `MONGO_URI`
+- `SECRET_KEY`
+
+### Successful Runs
+
+The pipeline was verified using:
+
+- `staging` branch push
+- GitHub Release `v1.0.2`
+- All required CI/CD jobs completed successfully.
 
 ## License
 
